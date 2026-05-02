@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 243 75% 59%;
+    --radius: 0.2rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: #262626;
+  }
+  body {
+    @apply bg-[#0a0a0a] text-neutral-100 antialiased;
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .huge-type {
+    font-family: "Syne", sans-serif;
+    font-size: clamp(4rem, 10vw, 120px);
+    line-height: 0.8;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  .mono-tag {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .glossy-text {
+    @apply relative inline-block;
+    background: linear-gradient(
+      to right,
+      #fff 20%,
+      #6366f1 40%,
+      #6366f1 60%,
+      #fff 80%
+    );
+    background-size: 200% auto;
+    color: #fff;
+    background-clip: text;
+    text-fill-color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+  }
+
+  .matrix-bg {
+    background: 
+      linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)),
+      url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+    position: relative;
+  }
+
+  .matrix-bg::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 1;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-neutral-950;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-neutral-800 rounded-full hover:bg-neutral-700 transition-colors;
+  }
+}
+
+/* Custom scrollbar to match theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}
+
+.prose-custom {
+  @apply prose prose-invert max-w-none;
+  --tw-prose-body: #d4d4d4;
+  --tw-prose-headings: #ffffff;
+  --tw-prose-links: #6366f1;
+  --tw-prose-bold: #ffffff;
+  --tw-prose-code: #93c5fd;
+  --tw-prose-pre-bg: #171717;
+}

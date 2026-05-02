@@ -1,0 +1,57 @@
+{
+  "entities": {
+    "Generation": {
+      "title": "Generation",
+      "description": "User generated website code and assets",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "prompt": { "type": "string" },
+        "html": { "type": "string" },
+        "previewUrl": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "prompt", "html", "created_at"]
+    },
+    "SupernovaConversation": {
+      "title": "Supernova Conversation",
+      "description": "A chat session in Supernova Studio",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["title"]
+    },
+    "SupernovaMessage": {
+      "title": "Supernova Message",
+      "description": "A single message in a Supernova conversation",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "enum": ["user", "assistant", "system"] },
+        "kind": { "type": "string", "enum": ["text", "image"] },
+        "content": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "prompt": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["role", "kind", "content"]
+    }
+  },
+  "firestore": {
+    "/generations/{genId}": {
+      "schema": "Generation",
+      "description": "Stored generations for users"
+    },
+    "/supernova_users/{uid}/conversations/{cid}": {
+      "schema": "SupernovaConversation",
+      "description": "User conversations"
+    },
+    "/supernova_users/{uid}/conversations/{cid}/messages/{mid}": {
+      "schema": "SupernovaMessage",
+      "description": "Messages within a conversation"
+    }
+  }
+}

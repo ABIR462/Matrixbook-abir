@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3: Primitive Definitions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // ─── Generations ───
+    match /generations/{genId} {
+      allow create: if isSignedIn() && isValidGeneration(incoming()) && incoming().uid == request.auth.uid;
+      allow read, update, delete: if isSignedIn() && existing().uid == request.auth.uid;
+    }
+
+    function isValidGeneration(data) {
+      return data.keys().hasAll(['uid', 'prompt', 'html', 'created_at'])
+        && data.uid is string
+        && data.prompt is string && data.prompt.size() <= 10000
+        && data.html is string && data.html.size() <= 1000000
+        && (data.get('previewUrl', '') is string);
+    }
+
+    // ─── Supernova ───
+    match /supernova_users/{uid} {
+      // User root - usually just a placeholder or for aggregate data
+      allow read, write: if isOwner(uid);
+
+      match /conversations/{cid} {
+        allow read, write: if isOwner(uid) && isValidId(cid);
+        
+        match /messages/{mid} {
+          allow read, write: if isOwner(uid) && isValidId(mid);
+        }
+      }
+    }
+
+    // Helper for supernova validation could be added, but for now owner-only is strict enough
+  }
+}
