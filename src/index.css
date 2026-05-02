@@ -41,10 +41,10 @@
 @layer components {
   .huge-type {
     font-family: "Syne", sans-serif;
-    font-size: clamp(4rem, 10vw, 120px);
-    line-height: 0.8;
+    font-size: clamp(2rem, 10vw, 100px);
+    line-height: 0.85;
     font-weight: 800;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.05em;
     text-transform: uppercase;
   }
 

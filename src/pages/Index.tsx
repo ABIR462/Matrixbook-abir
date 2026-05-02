@@ -38,12 +38,12 @@ const Index = () => {
           <div className="container px-6 flex flex-col lg:flex-row items-center justify-between gap-16 relative z-10">
             <div className="max-w-xl text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-6 font-sans">
-                Core Capability // 01
+                Core_Capability // 01
               </div>
-              <h2 className="text-4xl md:text-5xl font-sans font-bold tracking-tight mb-8 leading-[1.1]">
+              <h2 className="huge-type !text-3xl md:!text-5xl mb-6">
                 Seamlessly Orchestrate <br /> <span className="text-neutral-500">Neural Workflows.</span>
               </h2>
-              <p className="text-neutral-400 text-lg leading-relaxed mb-10 font-sans font-light">
+              <p className="text-neutral-400 text-sm md:text-lg leading-relaxed mb-10 font-sans font-light max-w-lg mx-auto lg:mx-0">
                 Connect your logic to our multimodal intelligence layer. Observe as Matrixbook synthesizes complex requirements into polished, production-ready interfaces in real-time.
               </p>
               
@@ -86,8 +86,8 @@ const Index = () => {
         <div className="container relative">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-16 mb-24">
             <div className="col-span-2">
-              <Brand size={40} />
-              <p className="text-neutral-400 mt-6 max-w-sm leading-relaxed font-sans font-light">
+              <Brand size={32} wordSize="lg" />
+              <p className="text-neutral-500 mt-8 max-w-sm leading-relaxed font-sans font-light text-sm">
                 The world's first neural operating system designed for the next era of multimodal intelligence. Built for engineers, by engineers.
               </p>
               <div className="flex items-center gap-4 mt-8">

@@ -16,15 +16,15 @@ export function Brand({
     : "text-2xl";
 
   return (
-    <span className="inline-flex items-center gap-2.5">
+    <span className="inline-flex items-center gap-3">
       <span
         className="relative inline-flex items-center justify-center shrink-0"
         style={{ width: size, height: size }}
       >
-        <img src="/src/assets/logo.png" alt="MATRIXBOOK" width={size} height={size} className="relative object-contain" />
+        <img src={logo} alt="MATRIXBOOK" width={size} height={size} className="relative object-contain" />
       </span>
       {showWord && (
-        <span className={`huge-type !italic-none !tracking-tighter ${sizeClass} glossy-text leading-none pb-1`}>
+        <span className={`huge-type !italic-none !tracking-tighter ${sizeClass} glossy-text leading-none pb-0.5 mt-0.5`}>
           MATRIXBOOK
         </span>
       )}

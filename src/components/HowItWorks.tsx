@@ -50,14 +50,15 @@ export function HowItWorks() {
       <div className="container px-4 relative">
         {/* Header */}
         <div className="max-w-2xl mb-20">
-          <p className="font-mono text-xs text-primary tracking-widest uppercase mb-4"></p>
-          <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight mb-5">
+          <p className="text-[10px] uppercase tracking-[0.3em] font-black text-indigo-500 mb-6">Process_Flow</p>
+          <h2 className="huge-type !text-4xl md:!text-5xl mb-6">
             From idea to website
             <br />
-            <span className="text-gradient">in four steps.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-200 to-neutral-500">in four steps.</span>
           </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed">
-            No design skills. No coding. Just describe what you want and watch it come to life.
+          <p className="text-neutral-500 text-sm md:text-base leading-relaxed font-sans max-w-lg">
+            A streamlined workflow designed for maximum efficiency. 
+            No design friction. No coding overhead.
           </p>
         </div>
 
@@ -96,22 +97,21 @@ export function HowItWorks() {
         </div>
 
         {/* Bottom CTA strip */}
-        <div className="mt-20 glass rounded-2xl p-8 md:p-12 text-center border border-primary/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5" />
+        <div className="mt-20 glass-panel rounded-3xl p-8 md:p-16 text-center border border-white/5 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-indigo-500/5 animate-pulse-glow" />
           <div className="relative z-10">
-            <p className="font-mono text-xs text-primary tracking-widest uppercase mb-3"></p>
-            <h3 className="font-display text-3xl md:text-4xl font-bold mb-4">
-              Your next website is one prompt away.
+            <h3 className="huge-type !text-2xl md:!text-4xl mb-6 text-white leading-tight">
+              Your next website is <br className="md:hidden" /> one prompt away.
             </h3>
-            <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-              Join thousands of creators building faster with Matrix AI.
+            <p className="text-neutral-500 mb-10 max-w-lg mx-auto text-sm md:text-base font-sans">
+              Join the new era of creators building with Matrixbook.
             </p>
             <a
-              href="#builder"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity shadow-glow"
+              href="#top"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-indigo-600 text-white font-bold text-xs uppercase tracking-[0.2em] hover:bg-indigo-500 transition-all shadow-[0_10px_40px_rgba(99,102,241,0.2)] active:scale-95"
             >
               <Wand2 className="w-4 h-4" />
-              Start building free
+              Initialize Session
             </a>
           </div>
         </div>

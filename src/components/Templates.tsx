@@ -12,10 +12,10 @@ export function Templates({ onPick }: { onPick: (t: Template) => void }) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-xl">
             <p className="font-mono text-xs text-primary tracking-widest uppercase mb-4"></p>
-            <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight mb-4">
-              Start from a
+            <h2 className="huge-type !text-4xl md:!text-6xl mb-6">
+              START FROM A
               <br />
-              <span className="text-gradient-brand">vibe.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">VIBE.</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
               Curated prompts that produce gorgeous, working pages. One click to remix and make it yours.

@@ -46,7 +46,7 @@ export function Hero({
 
       <div className="container relative z-10 px-6 text-center">
         {/* Animated Badge */}
-        <div className="inline-flex items-center gap-3 px-4 py-2 mb-12 rounded-full glass-panel text-[11px] uppercase tracking-[0.4em] font-sans font-bold text-indigo-400 animate-fade-in shadow-[0_0_40px_rgba(99,102,241,0.15)]">
+        <div className="inline-flex items-center gap-3 px-4 py-2 mb-8 md:mb-12 rounded-full glass-panel text-[10px] md:text-[11px] uppercase tracking-[0.4em] font-sans font-bold text-indigo-400 animate-fade-in shadow-[0_0_40px_rgba(99,102,241,0.15)] mx-auto">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
@@ -55,19 +55,19 @@ export function Hero({
         </div>
 
         {/* Massive Headline */}
-        <h1 className="huge-type mb-12 animate-fade-up text-white leading-[0.85] glossy-text tracking-tighter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <h1 className="huge-type mb-6 md:mb-10 animate-fade-up text-white leading-[0.9] glossy-text tracking-tighter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           ORCHESTRATE <br /> <span className="text-transparent bg-clip-text bg-gradient-to-tr from-indigo-500 via-purple-400 to-indigo-300">INTELLIGENCE</span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-neutral-400 text-lg md:text-2xl leading-relaxed mb-20 animate-fade-up delay-100 font-sans font-extralight tracking-tight">
+        <p className="max-w-2xl mx-auto text-neutral-400 text-sm md:text-xl leading-relaxed mb-10 md:mb-16 animate-fade-up delay-100 font-sans font-light tracking-tight px-6 opacity-80">
           Matrixbook is the terminal for multimodal engineering. 
           Synchronize high-fidelity AI workflows with precision.
         </p>
 
         {/* Action Center */}
-        <div className="max-w-3xl mx-auto animate-fade-up delay-200 mb-28 group/composer">
-          <div className="p-[1px] rounded-[36px] bg-gradient-to-b from-white/20 via-white/5 to-transparent shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-700 group-hover/composer:shadow-indigo-500/10">
-            <div className="bg-[#0a0a0a]/80 backdrop-blur-3xl rounded-[35px] overflow-hidden">
+        <div className="max-w-3xl mx-auto animate-fade-up delay-200 mb-20 md:mb-28 group/composer px-2 sm:px-0">
+          <div className="p-[1px] rounded-[24px] md:rounded-[36px] bg-gradient-to-b from-white/20 via-white/5 to-transparent shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-700 group-hover/composer:shadow-indigo-500/10">
+            <div className="bg-[#0a0a0a]/80 backdrop-blur-3xl rounded-[23px] md:rounded-[35px] overflow-hidden">
                <PromptComposer
                  onSubmit={(prompt, attachments) => onSubmit(prompt, attachments)}
                  loading={loading}
@@ -75,24 +75,24 @@ export function Hero({
             </div>
           </div>
           
-          <div className="flex flex-wrap items-center justify-center gap-10 mt-12">
-            <div className="flex -space-x-4">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-6 md:gap-10 mt-8 md:mt-12">
+            <div className="flex -space-x-3 md:-space-x-4">
               {[15, 23, 44, 52, 61].map(i => (
-                <div key={i} className="w-12 h-12 rounded-full border-2 border-[#050505] bg-neutral-900 overflow-hidden ring-1 ring-white/20 grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer hover:scale-110 active:scale-95">
+                <div key={i} className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-[#050505] bg-neutral-900 overflow-hidden ring-1 ring-white/20 grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer hover:scale-110 active:scale-95">
                   <img src={`https://i.pravatar.cc/150?u=${i}`} alt="" className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>
             <div className="h-6 w-px bg-white/10 hidden sm:block" />
-            <div className="flex flex-col items-start gap-1">
-               <span className="text-[10px] font-sans font-black text-neutral-500 uppercase tracking-[0.3em]">
+            <div className="flex flex-col items-center sm:items-start gap-1">
+               <span className="text-[9px] md:text-[10px] font-sans font-black text-neutral-500 uppercase tracking-[0.3em]">
                  Data Privacy Standards
                </span>
                <div className="flex items-center gap-4">
-                  <span className="text-[12px] font-sans font-bold text-neutral-200 uppercase tracking-widest flex items-center gap-2">
+                  <span className="text-[10px] md:text-[12px] font-sans font-bold text-neutral-200 uppercase tracking-widest flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full bg-emerald-500" /> AES-256
                   </span>
-                  <span className="text-[12px] font-sans font-bold text-neutral-200 uppercase tracking-widest flex items-center gap-2">
+                  <span className="text-[10px] md:text-[12px] font-sans font-bold text-neutral-200 uppercase tracking-widest flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full bg-emerald-500" /> ISO/IEC 27001
                   </span>
                </div>
