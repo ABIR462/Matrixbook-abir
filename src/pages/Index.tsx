@@ -23,7 +23,9 @@ const Index = () => {
 
   useEffect(() => {
     document.title = "MATRIXBOOK — The Operating System for Multimodal Intelligence";
-  }, []);  return (
+  }, []);
+
+  return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30 selection:text-indigo-200">
       <Navbar />
       <main>

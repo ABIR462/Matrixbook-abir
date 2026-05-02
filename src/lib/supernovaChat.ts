@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { isGeminiConfigured } from "@/lib/env";
+import { appEnv } from "@/lib/env";
 
 export type ChatPart =
   | { type: "text"; text: string }
