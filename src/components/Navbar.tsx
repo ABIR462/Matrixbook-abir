@@ -22,11 +22,10 @@ export function Navbar() {
   const avatarUrl = user?.photoURL ?? undefined;
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800">
+    <header className="fixed top-0 inset-x-0 z-50 glass-panel border-b border-white/5 neo-blur">
       <div className="container flex items-center justify-between h-16 px-6">
-        <Link to="/" className="flex items-center gap-3">
-          <img src="/src/assets/logo.png" alt="MATRIXBOOK" className="w-8 h-8 object-contain" referrerPolicy="no-referrer" />
-          <span className="font-bold tracking-tighter text-xl hidden sm:inline uppercase glossy-text">MATRIXBOOK</span>
+        <Link to="/" className="flex items-center gap-3 group">
+          <Brand size={28} />
         </Link>
  
         <nav className="hidden md:flex items-center gap-6 mono-tag text-neutral-500">

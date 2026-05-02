@@ -35,7 +35,7 @@ export const appEnv = {
     model: readEnv("VITE_MISTRAL_MODEL", "codestral-latest"),
   },
   gemini: {
-    apiKey: (typeof process !== "undefined" && process.env ? process.env.GEMINI_API_KEY : "") || "",
+    apiKey: readEnv("VITE_GEMINI_API_KEY") || (typeof process !== "undefined" && process.env ? process.env.GEMINI_API_KEY : "") || "",
   },
 } as const;
 
@@ -57,4 +57,4 @@ export const mistralMissingEnvKeys = [
 export const isFirebaseConfigured = firebaseMissingEnvKeys.length === 0;
 export const isMistralConfigured = mistralMissingEnvKeys.length === 0;
 
-export const isGeminiConfigured = !!(typeof process !== "undefined" && process.env && process.env.GEMINI_API_KEY);
+export const isGeminiConfigured = !!appEnv.gemini.apiKey;

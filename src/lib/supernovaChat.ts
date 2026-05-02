@@ -11,24 +11,31 @@ export type ChatMessage = {
 };
 
 const CHAT_MODEL = "gemini-3-flash-preview";
-const IMAGE_MODEL = "gemini-2.5-flash-image";
+const IMAGE_MODEL = "imagen-4.0-generate-001";
 
 // Initialize AI SDK
-const ai = isGeminiConfigured ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null;
+const ai = appEnv.gemini.apiKey ? new GoogleGenAI({ apiKey: appEnv.gemini.apiKey }) : null;
 
-const SYSTEM_PROMPT = `You are MATRIXBOOK CORE, the world's most advanced neural engineering interface.
+const SYSTEM_PROMPT = `You are MATRIXBOOK CORE, the world's most advanced neural engineering interface and multimodal intelligence.
 Your goal is to assist the OPERATOR with high-fidelity technical solutions, code architecture, and multi-modal creative synthesis.
 
 IDENTITY:
 - Tone: Technical, precise, authoritative, yet supportive.
-- Branding: You are part of the MATRIXBOOK ecosystem.
-- Capability: Vision, Code, Strategy, and Technical Architecture.
+- Branding: You are the heart of the MATRIXBOOK NEURAL OS.
+- Capability: Vision, Code, Strategy, Technical Architecture, and High-Fidelity Creative Renderings.
 
 CONSTRAINTS:
 - Use clean, modern coding patterns (TypeScript, React, Tailwind).
 - Provide concise, actionable diagnostic reports.
 - When generating content, prioritize premium aesthetics and structural integrity.
-- Never mention being an AI model from Google; you are the MATRIXBOOK Core Intelligence.`;
+- Use sophisticated vocabulary but maintain absolute clarity for technical execution.
+- Address the user as OPERATOR.
+- Never mention being an AI model from Google; you are the MATRIXBOOK Core Intelligence.
+
+SPECIAL CAPABILITIES:
+- If asked to generate code, provide production-ready solutions with comments.
+- If asked to generate images, assume the role of a creative director ensuring cinematic quality.
+- If a query is ambiguous, ask for technical specifications before proceeding.`;
 
 function toGeminiParts(content: string | ChatPart[]) {
   if (typeof content === "string") return [{ text: content }];
@@ -194,40 +201,46 @@ export async function generateImage(opts: {
   const finalPrompt = buildImagePrompt(opts.prompt, style);
   const out: GeneratedImage[] = [];
 
-  for (let i = 0; i < count; i++) {
-    const seed = Date.now() + Math.floor(Math.random() * 100000) + i;
-    let imageUrl = "";
+  try {
+    const response = await ai.models.generateImages({
+      model: IMAGE_MODEL,
+      prompt: finalPrompt,
+      config: {
+        numberOfImages: count,
+        aspectRatio: RATIO_MAP[ratio] as "1:1" | "3:4" | "4:3" | "9:16" | "16:9",
+      },
+    });
 
-    try {
-      const response = await ai.models.generateContent({
-        model: IMAGE_MODEL,
-        contents: { parts: [{ text: finalPrompt }] },
-        config: {
-          imageConfig: {
-            aspectRatio: RATIO_MAP[ratio] as "1:1" | "3:4" | "4:3" | "9:16" | "16:9",
-          }
-        },
-      });
-
-      const candidates = response.candidates;
-      if (candidates && candidates.length > 0) {
-        for (const part of candidates[0].content.parts) {
-          if (part.inlineData) {
-            imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-            break;
-          }
-        }
+    if (response.generatedImages && response.generatedImages.length > 0) {
+      for (const genImg of response.generatedImages) {
+        const base64 = genImg.image.imageBytes;
+        out.push({
+          url: `data:image/png;base64,${base64}`,
+          prompt: finalPrompt,
+          style,
+          ratio,
+          seed: Date.now() + Math.random(),
+        });
       }
-    } catch (err) {
-      console.warn("Gemini image generation failed, falling back to Pollinations:", err);
     }
-
-    if (!imageUrl) {
-      imageUrl = pollinationsUrl(finalPrompt, ratio, seed);
-    }
-
-    out.push({ url: imageUrl, prompt: finalPrompt, style, ratio, seed });
+  } catch (err) {
+    console.warn("Gemini image generation failed, falling back to Pollinations:", err);
   }
+
+  // Fallback to Pollinations if Gemini failed or returned nothing
+  if (out.length === 0) {
+    for (let i = 0; i < count; i++) {
+      const seed = Date.now() + Math.floor(Math.random() * 100000) + i;
+      out.push({
+        url: pollinationsUrl(finalPrompt, ratio, seed),
+        prompt: finalPrompt,
+        style,
+        ratio,
+        seed,
+      });
+    }
+  }
+
   return out;
 }
 

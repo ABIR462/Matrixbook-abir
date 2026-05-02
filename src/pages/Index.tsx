@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Workflow } from "@/components/Workflow";
@@ -8,7 +9,7 @@ import { Templates } from "@/components/Templates";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Brand } from "@/components/Brand";
 import type { Template } from "@/lib/templates";
-import { Github, Twitter } from "lucide-react";
+import { Github, Twitter, Sparkles } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();

@@ -391,30 +391,49 @@ export default function Supernova() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:pb-12 pointer-events-none">
-          <div className="max-w-4xl mx-auto pointer-events-auto">
-            <div className={`relative group transition-all duration-500 ${busy ? "opacity-80" : "opacity-100"}`}>
-              {/* Glassmorphism background */}
-              <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-2xl rounded-[28px] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)]" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8 lg:pb-16 pointer-events-none">
+          <div className="max-w-3xl mx-auto pointer-events-auto">
+            <div className={`relative group transition-all duration-700 ${busy ? "scale-[0.99] opacity-90" : "scale-100 opacity-100"}`}>
+              {/* Outer Glow / Container */}
+              <div className="absolute -inset-[1px] bg-gradient-to-r from-indigo-500/50 via-purple-500/50 to-indigo-500/50 rounded-[32px] blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
               
-              <div className="relative flex flex-col p-2">
-                {/* Mode indicators */}
-                <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5 mb-1 overflow-x-auto no-scrollbar">
+              <div className="relative flex flex-col glass-panel rounded-[31px] neo-blur shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden">
+                {/* Thinking line */}
+                <AnimatePresence>
+                  {busy && (
+                    <motion.div 
+                      initial={{ left: "-100%" }}
+                      animate={{ left: "100%" }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                      className="absolute top-0 h-[2px] w-1/3 bg-gradient-to-r from-transparent via-indigo-500 to-transparent z-10"
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Sub-actions / Mode toggle */}
+                <div className="flex items-center gap-3 px-6 py-3 border-b border-white/5 overflow-x-auto no-scrollbar">
                   <button 
-                    onClick={() => setImageMode(v => !v)} 
-                    className={`text-[10px] sm:text-[11px] px-3 py-1.5 rounded-full transition-all flex items-center gap-2 whitespace-nowrap font-sans font-medium ${imageMode ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'bg-white/5 text-neutral-400 border border-white/5'}`}
+                    onClick={() => setImageMode(false)} 
+                    className={`text-[10px] uppercase tracking-widest font-black px-4 py-2 rounded-full transition-all flex items-center gap-2 ${!imageMode ? 'bg-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'bg-transparent text-neutral-500 hover:text-neutral-300'}`}
                   >
-                    <ImageIcon className="w-3.5 h-3.5" /> {imageMode ? "Imaging Mode" : "Analysis Mode"}
+                    Analysis
                   </button>
+                  <button 
+                    onClick={() => setImageMode(true)} 
+                    className={`text-[10px] uppercase tracking-widest font-black px-4 py-2 rounded-full transition-all flex items-center gap-2 ${imageMode ? 'bg-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'bg-transparent text-neutral-500 hover:text-neutral-300'}`}
+                  >
+                    Imagine
+                  </button>
+                  
                   {imageMode && (
-                    <>
-                      <select value={style} onChange={e => setStyle(e.target.value as ImageStyle)} className="text-[10px] sm:text-[11px] bg-white/5 border border-white/5 rounded-full px-3 py-1.5 text-neutral-300 outline-none">
+                    <div className="flex items-center gap-2 ml-2 pl-4 border-l border-white/10">
+                      <select value={style} onChange={e => setStyle(e.target.value as ImageStyle)} className="text-[10px] uppercase tracking-widest font-black bg-white/5 border-none rounded-full px-3 py-1.5 text-indigo-400 outline-none cursor-pointer hover:bg-white/10 transition-colors">
                         {STYLES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                       </select>
-                      <select value={ratio} onChange={e => setRatio(e.target.value as ImageRatio)} className="text-[10px] sm:text-[11px] bg-white/5 border border-white/5 rounded-full px-3 py-1.5 text-neutral-300 outline-none">
+                      <select value={ratio} onChange={e => setRatio(e.target.value as ImageRatio)} className="text-[10px] uppercase tracking-widest font-black bg-white/5 border-none rounded-full px-3 py-1.5 text-indigo-400 outline-none cursor-pointer hover:bg-white/10 transition-colors">
                         {RATIOS.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
-                    </>
+                    </div>
                   )}
                 </div>
 
@@ -446,8 +465,8 @@ export default function Supernova() {
                         <StopCircle className="w-5 h-5" />
                       </Button>
                     ) : (
-                      <Button onClick={send} disabled={!draft.trim() && attachments.length === 0} size="icon" className="h-10 w-10 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-lg shadow-indigo-500/20 disabled:opacity-30 transition-all">
-                        <Send className="w-5 h-5" />
+                      <Button onClick={send} disabled={!draft.trim() && attachments.length === 0} size="icon" className="h-10 w-10 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-lg shadow-indigo-500/40 disabled:opacity-30 transition-all">
+                        <Sparkles className="w-5 h-5" />
                       </Button>
                     )}
                   </div>
