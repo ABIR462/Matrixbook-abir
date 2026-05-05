@@ -1,7 +1,10 @@
-import { MISTRAL_CHAT_URL, MISTRAL_MODEL, explainMistralError, getMistralHeaders, hasMistralConfig } from "@/lib/mistral";
+import { getOpenRouterClient, hasOpenRouterConfig, explainOpenRouterError } from "@/lib/openrouter";
+import { appEnv } from "@/lib/env";
 
-export type AIMessage = { role: string; content: string };
-export type AIProvider = "Mistral";
+export type AIMessage = { role: "user" | "assistant" | "system"; content: string };
+export type AIProvider = "OpenRouter";
+
+const DEFAULT_MODEL = appEnv.openrouter.model || "inclusionai/ling-2.6-1t:free";
 
 async function withTimeout<T>(
   task: (signal: AbortSignal) => Promise<T>,
@@ -23,38 +26,6 @@ async function withTimeout<T>(
   }
 }
 
-async function callMistral(messages: AIMessage[], signal?: AbortSignal, attempt = 1): Promise<string> {
-  const response = await fetch(MISTRAL_CHAT_URL, {
-    method: "POST",
-    headers: getMistralHeaders(),
-    signal,
-    body: JSON.stringify({
-      model: MISTRAL_MODEL,
-      messages,
-      temperature: 0.15,
-      max_tokens: 4096,
-    }),
-  });
-
-  if ((response.status === 502 || response.status === 503 || response.status === 504) && attempt < 2) {
-    await new Promise((resolve) => window.setTimeout(resolve, 1200));
-    return callMistral(messages, signal, attempt + 1);
-  }
-
-  if (!response.ok) {
-    let details = "";
-    try {
-      details = await response.text();
-    } catch {
-      details = "";
-    }
-    throw new Error(`${explainMistralError(response.status)}${details ? `: ${details.slice(0, 220)}` : ""}`);
-  }
-
-  const data = await response.json();
-  return String(data?.choices?.[0]?.message?.content ?? "").trim();
-}
-
 /**
  * Stream a chat completion. Calls onDelta for every text token chunk as it arrives.
  * Returns the full concatenated text and which provider answered.
@@ -64,81 +35,36 @@ export async function streamWebsiteAI(
   onDelta: (chunk: string, full: string) => void,
   options: { timeoutMs?: number; signal?: AbortSignal } = {},
 ): Promise<{ content: string; provider: AIProvider }> {
-  const errors: string[] = [];
-
-  const tryStream = async (
-    url: string,
-    headers: Record<string, string>,
-    model: string,
-    signal: AbortSignal,
-  ) => {
-    const resp = await fetch(url, {
-      method: "POST",
-      headers,
-      signal,
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.15,
-        max_tokens: 4096,
-        stream: true,
-      }),
-    });
-    if (!resp.ok || !resp.body) {
-      let detail = "";
-      try { detail = await resp.text(); } catch (e) {
-        console.error("Silent error in text decode:", e);
-      }
-      throw new Error(`${explainMistralError(resp.status)}${detail ? `: ${detail.slice(0, 200)}` : ""}`);
-    }
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-    let full = "";
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      let idx: number;
-      while ((idx = buffer.indexOf("\n")) !== -1) {
-        let line = buffer.slice(0, idx);
-        buffer = buffer.slice(idx + 1);
-        if (line.endsWith("\r")) line = line.slice(0, -1);
-        if (!line.startsWith("data:")) continue;
-        const payload = line.slice(5).trim();
-        if (!payload || payload === "[DONE]") continue;
-        try {
-          const json = JSON.parse(payload);
-          const delta = json?.choices?.[0]?.delta?.content;
-          if (typeof delta === "string" && delta) {
-            full += delta;
-            onDelta(delta, full);
-          }
-        } catch {
-          buffer = line + "\n" + buffer;
-          break;
-        }
-      }
-    }
-    return full;
-  };
+  if (!hasOpenRouterConfig) {
+    throw new Error("OpenRouter AI is not configured — check your VITE_OPENROUTER_API_KEY");
+  }
 
   return withTimeout(async (signal) => {
-    if (hasMistralConfig) {
-      try {
-        const content = await tryStream(
-          MISTRAL_CHAT_URL,
-          getMistralHeaders() as Record<string, string>,
-          MISTRAL_MODEL,
-          signal,
-        );
-        if (content) return { content, provider: "Mistral" as const };
-        errors.push("Mistral returned empty stream");
-      } catch (e) {
-        errors.push(e instanceof Error ? e.message : "Mistral stream failed");
+    try {
+      const client = getOpenRouterClient();
+      const stream = await client.chat.completions.create({
+        model: DEFAULT_MODEL,
+        messages: messages as any,
+        stream: true,
+        temperature: 0.15,
+        max_tokens: 4096,
+      });
+
+      let full = "";
+      for await (const chunk of stream) {
+        if (signal.aborted) break;
+        const delta = chunk.choices[0]?.delta?.content || "";
+        if (delta) {
+          full += delta;
+          onDelta(delta, full);
+        }
       }
+
+      if (!full) throw new Error("AI returned empty stream");
+      return { content: full, provider: "OpenRouter" as const };
+    } catch (e: any) {
+      throw new Error(explainOpenRouterError(e));
     }
-    throw new Error(errors.length ? errors.join(" | ") : "Mistral AI is not configured — check your API key");
   }, options.timeoutMs ?? 120_000, options.signal);
 }
 
@@ -146,24 +72,26 @@ export async function completeWebsiteAI(
   messages: AIMessage[],
   options: { timeoutMs?: number } = {},
 ): Promise<{ content: string; provider: AIProvider }> {
-  const errors: string[] = [];
+  if (!hasOpenRouterConfig) {
+    throw new Error("OpenRouter AI is not configured — check your VITE_OPENROUTER_API_KEY");
+  }
 
   return withTimeout(async (signal) => {
-    if (hasMistralConfig) {
-      try {
-        const content = await callMistral(messages, signal);
-        if (content) return { content, provider: "Mistral" as const };
-        errors.push("Mistral returned empty content");
-      } catch (error) {
-        errors.push(error instanceof Error ? error.message : "Mistral failed");
-      }
-    }
+    try {
+      const client = getOpenRouterClient();
+      const completion = await client.chat.completions.create({
+        model: DEFAULT_MODEL,
+        messages: messages as any,
+        temperature: 0.15,
+        max_tokens: 4096,
+      });
 
-    throw new Error(
-      errors.length
-        ? errors.join(" | ")
-        : "Mistral AI is not configured. Check your API key.",
-    );
+      const content = completion.choices[0]?.message?.content || "";
+      if (!content) throw new Error("AI returned empty content");
+      return { content, provider: "OpenRouter" as const };
+    } catch (error: any) {
+      throw new Error(explainOpenRouterError(error));
+    }
   }, options.timeoutMs ?? 90_000);
 }
 

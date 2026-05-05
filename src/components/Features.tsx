@@ -73,12 +73,12 @@ export function Features() {
         {/* Header */}
         <div className="max-w-2xl mb-16">
           <p className="text-[10px] uppercase tracking-[0.3em] font-black text-indigo-500 mb-6">Core_Capabilities</p>
-          <h2 className="huge-type !text-4xl md:!text-5xl mb-6">
+          <h2 className="huge-type !text-3xl md:!text-4xl mb-6">
             Everything you need
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-200 to-neutral-500">to ship faster.</span>
           </h2>
-          <p className="text-neutral-500 text-sm md:text-base leading-relaxed font-sans max-w-lg">
+          <p className="text-neutral-500 text-xs md:text-sm leading-relaxed font-sans max-w-lg">
             Matrixbook combines multimodal intelligence with real-time editing, 
             instant deployment, and enterprise-grade security.
           </p>

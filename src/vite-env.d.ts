@@ -13,9 +13,9 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_MESSAGING_SENDER_ID: string;
   readonly VITE_FIREBASE_APP_ID: string;
   readonly VITE_FIREBASE_MEASUREMENT_ID: string;
-  readonly VITE_MISTRAL_API_KEY: string;
-  readonly VITE_MISTRAL_CHAT_ENDPOINT: string;
-  readonly VITE_MISTRAL_MODEL: string;
+  readonly VITE_OPENROUTER_API_KEY: string;
+  readonly VITE_OPENROUTER_MODEL: string;
+  readonly VITE_ABLY_API_KEY: string;
   readonly VITE_GEMINI_API_KEY: string;
 }
 

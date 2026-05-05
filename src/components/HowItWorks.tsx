@@ -51,12 +51,12 @@ export function HowItWorks() {
         {/* Header */}
         <div className="max-w-2xl mb-20">
           <p className="text-[10px] uppercase tracking-[0.3em] font-black text-indigo-500 mb-6">Process_Flow</p>
-          <h2 className="huge-type !text-4xl md:!text-5xl mb-6">
+          <h2 className="huge-type !text-3xl md:!text-4xl mb-6">
             From idea to website
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-200 to-neutral-500">in four steps.</span>
           </h2>
-          <p className="text-neutral-500 text-sm md:text-base leading-relaxed font-sans max-w-lg">
+          <p className="text-neutral-500 text-xs md:text-sm leading-relaxed font-sans max-w-lg">
             A streamlined workflow designed for maximum efficiency. 
             No design friction. No coding overhead.
           </p>
@@ -103,7 +103,7 @@ export function HowItWorks() {
             <h3 className="huge-type !text-2xl md:!text-4xl mb-6 text-white leading-tight">
               Your next website is <br className="md:hidden" /> one prompt away.
             </h3>
-            <p className="text-neutral-500 mb-10 max-w-lg mx-auto text-sm md:text-base font-sans">
+            <p className="text-neutral-500 mb-10 max-w-lg mx-auto text-xs md:text-sm font-sans">
               Join the new era of creators building with Matrixbook.
             </p>
             <a

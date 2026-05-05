@@ -1,10 +1,3 @@
-import saasImg from "@/assets/templates/saas.jpg";
-import portfolioImg from "@/assets/templates/portfolio.jpg";
-import startupImg from "@/assets/templates/startup.jpg";
-import ecomImg from "@/assets/templates/ecom.jpg";
-import eventImg from "@/assets/templates/event.jpg";
-import blogImg from "@/assets/templates/blog.jpg";
-
 export type Template = {
   id: string;
   title: string;

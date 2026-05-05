@@ -11,7 +11,7 @@ export type ChatMessage = {
 };
 
 const CHAT_MODEL = "gemini-3-flash-preview";
-const IMAGE_MODEL = "imagen-4.0-generate-001";
+const IMAGE_MODEL = "gemini-2.5-flash-image";
 
 // Initialize AI SDK
 const ai = appEnv.gemini.apiKey ? new GoogleGenAI({ apiKey: appEnv.gemini.apiKey }) : null;
@@ -194,33 +194,40 @@ export async function generateImage(opts: {
   count?: number;
   signal?: AbortSignal;
 }): Promise<GeneratedImage[]> {
-  if (!ai) throw new Error("Gemini API key is not configured");
+  if (!ai) throw new Error("Gemini API key is not configured. Please ensure GEMINI_API_KEY is set in your environment.");
   const style = opts.style ?? "auto";
   const ratio = opts.ratio ?? "1:1";
-  const count = Math.min(Math.max(opts.count ?? 1, 1), 4);
+  const count = 1; // gemini-2.5-flash-image usually generates 1 per request
   const finalPrompt = buildImagePrompt(opts.prompt, style);
   const out: GeneratedImage[] = [];
 
   try {
-    const response = await ai.models.generateImages({
+    const response = await ai.models.generateContent({
       model: IMAGE_MODEL,
-      prompt: finalPrompt,
+      contents: {
+        parts: [
+          { text: finalPrompt },
+        ],
+      },
       config: {
-        numberOfImages: count,
-        aspectRatio: RATIO_MAP[ratio] as "1:1" | "3:4" | "4:3" | "9:16" | "16:9",
+        imageConfig: {
+          aspectRatio: ratio === "3:2" ? "4:3" : (ratio === "2:3" ? "3:4" : ratio as any),
+        },
       },
     });
 
-    if (response.generatedImages && response.generatedImages.length > 0) {
-      for (const genImg of response.generatedImages) {
-        const base64 = genImg.image.imageBytes;
-        out.push({
-          url: `data:image/png;base64,${base64}`,
-          prompt: finalPrompt,
-          style,
-          ratio,
-          seed: Date.now() + Math.random(),
-        });
+    if (response.candidates && response.candidates[0].content.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          const base64 = part.inlineData.data;
+          out.push({
+            url: `data:image/png;base64,${base64}`,
+            prompt: finalPrompt,
+            style,
+            ratio,
+            seed: Date.now() + Math.random(),
+          });
+        }
       }
     }
   } catch (err) {
@@ -229,16 +236,18 @@ export async function generateImage(opts: {
 
   // Fallback to Pollinations if Gemini failed or returned nothing
   if (out.length === 0) {
-    for (let i = 0; i < count; i++) {
-      const seed = Date.now() + Math.floor(Math.random() * 100000) + i;
-      out.push({
-        url: pollinationsUrl(finalPrompt, ratio, seed),
-        prompt: finalPrompt,
-        style,
-        ratio,
-        seed,
-      });
-    }
+    // ... pollinations fallback ...
+    const fallbackCount = Math.min(Math.max(opts.count ?? 1, 1), 4);
+    for (let i = 0; i < fallbackCount; i++) {
+        const seed = Date.now() + Math.floor(Math.random() * 100000) + i;
+        out.push({
+          url: pollinationsUrl(finalPrompt, ratio, seed),
+          prompt: finalPrompt,
+          style,
+          ratio,
+          seed,
+        });
+      }
   }
 
   return out;

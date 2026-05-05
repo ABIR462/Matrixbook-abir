@@ -6,9 +6,9 @@ type RuntimeEnvKey =
   | "VITE_FIREBASE_MESSAGING_SENDER_ID"
   | "VITE_FIREBASE_APP_ID"
   | "VITE_FIREBASE_MEASUREMENT_ID"
-  | "VITE_MISTRAL_API_KEY"
-  | "VITE_MISTRAL_CHAT_ENDPOINT"
-  | "VITE_MISTRAL_MODEL"
+  | "VITE_OPENROUTER_API_KEY"
+  | "VITE_OPENROUTER_MODEL"
+  | "VITE_ABLY_API_KEY"
   | "VITE_GEMINI_API_KEY";
 
 const readEnv = (key: RuntimeEnvKey, fallback = "") => {
@@ -26,16 +26,15 @@ export const appEnv = {
     appId: readEnv("VITE_FIREBASE_APP_ID"),
     measurementId: readEnv("VITE_FIREBASE_MEASUREMENT_ID"),
   },
-  mistral: {
-    apiKey: readEnv("VITE_MISTRAL_API_KEY"),
-    chatEndpoint: readEnv(
-      "VITE_MISTRAL_CHAT_ENDPOINT",
-      "https://api.mistral.ai/v1/chat/completions",
-    ),
-    model: readEnv("VITE_MISTRAL_MODEL", "codestral-latest"),
+  openrouter: {
+    apiKey: readEnv("VITE_OPENROUTER_API_KEY"),
+    model: readEnv("VITE_OPENROUTER_MODEL", "inclusionai/ling-2.6-1t:free"),
+  },
+  ably: {
+    apiKey: readEnv("VITE_ABLY_API_KEY"),
   },
   gemini: {
-    apiKey: readEnv("VITE_GEMINI_API_KEY") || (typeof process !== "undefined" && process.env ? process.env.GEMINI_API_KEY : "") || "",
+    apiKey: (typeof process !== "undefined" && process.env && process.env.GEMINI_API_KEY) ? process.env.GEMINI_API_KEY : readEnv("VITE_GEMINI_API_KEY"),
   },
 } as const;
 
@@ -48,13 +47,12 @@ export const firebaseMissingEnvKeys = [
   ["VITE_FIREBASE_APP_ID", appEnv.firebase.appId],
 ].flatMap(([key, value]) => (value ? [] : [key]));
 
-export const mistralMissingEnvKeys = [
-  ["VITE_MISTRAL_API_KEY", appEnv.mistral.apiKey],
-  ["VITE_MISTRAL_CHAT_ENDPOINT", appEnv.mistral.chatEndpoint],
-  ["VITE_MISTRAL_MODEL", appEnv.mistral.model],
+export const openrouterMissingEnvKeys = [
+  ["VITE_OPENROUTER_API_KEY", appEnv.openrouter.apiKey],
+  ["VITE_OPENROUTER_MODEL", appEnv.openrouter.model],
 ].flatMap(([key, value]) => (value ? [] : [key]));
 
 export const isFirebaseConfigured = firebaseMissingEnvKeys.length === 0;
-export const isMistralConfigured = mistralMissingEnvKeys.length === 0;
-
+export const isOpenRouterConfigured = openrouterMissingEnvKeys.length === 0;
+export const isAblyConfigured = !!appEnv.ably.apiKey;
 export const isGeminiConfigured = !!appEnv.gemini.apiKey;

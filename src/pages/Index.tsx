@@ -40,10 +40,10 @@ const Index = () => {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-6 font-sans">
                 Core_Capability // 01
               </div>
-              <h2 className="huge-type !text-3xl md:!text-5xl mb-6">
+              <h2 className="huge-type !text-2xl md:!text-4xl mb-6">
                 Seamlessly Orchestrate <br /> <span className="text-neutral-500">Neural Workflows.</span>
               </h2>
-              <p className="text-neutral-400 text-sm md:text-lg leading-relaxed mb-10 font-sans font-light max-w-lg mx-auto lg:mx-0">
+              <p className="text-neutral-400 text-xs md:text-sm leading-relaxed mb-10 font-sans font-light max-w-lg mx-auto lg:mx-0">
                 Connect your logic to our multimodal intelligence layer. Observe as Matrixbook synthesizes complex requirements into polished, production-ready interfaces in real-time.
               </p>
               

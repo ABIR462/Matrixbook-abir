@@ -28,6 +28,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/integrations/firebase/config";
 import { streamWebsiteAI } from "@/lib/websiteAI";
+import { VibeLoader } from "@/components/VibeLoader";
+import * as Ably from 'ably';
+import { appEnv } from "@/lib/env";
 
 type ChatTurn = { role: "user" | "assistant"; content: string };
 type Device = "desktop" | "tablet" | "mobile";
@@ -47,14 +50,13 @@ Return ONLY one fenced code block containing a single-file HTML solution. No pre
 
 CORE ARCHITECTURAL PRINCIPLES:
 - UTILITY: Use Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-- ASSETS: You MUST include high-quality, relevant thematic images. Use Unsplash (https://images.unsplash.com/photo-...) or Pollinations (https://image.pollinations.ai/prompt/...) with highly descriptive prompts.
+- ASSETS: You MUST include high-quality, relevant thematic images. Use Unsplash (https://images.unsplash.com/photo-...) with highly descriptive prompts.
 - AESTHETICS: Modern premium UI/UX: glassmorphism, depth through layered shadows, smooth Bezier transitions, and sophisticated typography (Inter/Syne).
 - RESPONSIVENESS: Pixel-perfect fluid layouts across all breakpoints.
 - INTERACTIVITY: Use vanilla JavaScript for high-performance interactive states.
 - SEMANTICS: Valid HTML5 structure for optimal SEO and accessibility.
 
 Special Instruction: Lead with visual impact. Every design must feel "custom" and expensive.`;
-
 
 function langFromPath(p: string) {
   const ext = p.split(".").pop()?.toLowerCase() ?? "";
@@ -130,6 +132,9 @@ export default function Build() {
   const [showHistory, setShowHistory] = useState(false);
   const [queuedCount, setQueuedCount] = useState(0);
   const [streamBuffer, setStreamBuffer] = useState("");
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+
+  const ablyRef = useRef<Ably.Realtime | null>(null);
 
   const didAutoRun = useRef(false);
   const filesRef = useRef(files);
@@ -156,6 +161,13 @@ export default function Build() {
       run(p);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (appEnv.ably.apiKey) {
+      ablyRef.current = new Ably.Realtime({ key: appEnv.ably.apiKey });
+    }
+    return () => ablyRef.current?.close();
   }, []);
 
   const previewHtml = useMemo(() => (files.length ? pickPreview(files) : ""), [files]);
@@ -197,6 +209,7 @@ export default function Build() {
     setHistory(baseHistory);
     setStreamBuffer("");
     setStreaming(true);
+    setIsSynthesizing(true);
 
     const filesContext = isFollowUp
       ? "\n\nCURRENT PROJECT FILES (update them and return ALL files again):\n" +
@@ -232,6 +245,7 @@ export default function Build() {
           const updated: ChatTurn[] = [...baseHistory, { role: "assistant", content: preview + "▍" }];
           historyRef.current = updated;
           setHistory(updated);
+          if (setIsSynthesizing) setIsSynthesizing(false); // Hide synthetic loader once stream starts
         },
         { timeoutMs: 180_000, signal: controller.signal },
       );
@@ -299,13 +313,18 @@ export default function Build() {
   const run = async (prompt: string) => {
     const next = prompt.trim();
     if (!next) return;
+    
+    // Clear draft to focus on the build process
     setDraft("");
+    
     if (loadingRef.current) {
       queueRef.current.push(next);
       setQueuedCount(queueRef.current.length);
-      toast.message("Queued — will run after current generation");
+      toast.message("Integration queued — will synthesize following current workflow");
       return;
     }
+
+    // Standard run logic
     await drainQueue(next);
   };
 
@@ -460,17 +479,32 @@ export default function Build() {
           </aside>
         )}
 
-        <div className="flex-1 flex items-center justify-center overflow-auto p-4">
+        <div className="flex-1 flex items-center justify-center overflow-auto p-4 bg-[#050505]">
           {tab === "preview" ? (
-            <div className={`bg-white overflow-hidden rounded-xl shadow-2xl shadow-black/50 ${getSize()}`} style={{ transform: `scale(${scale})`, transformOrigin: "top center" }}>
-              {previewHtml ? (
+            <div className={`bg-white overflow-hidden rounded-xl shadow-[0_0_100px_rgba(0,0,0,0.8)] ${getSize()}`} style={{ transform: `scale(${scale})`, transformOrigin: "top center" }}>
+              {previewHtml && !isSynthesizing ? (
                 <iframe srcDoc={previewHtml} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin" title="Preview" />
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-3">
-                  {loading ? (
-                    <><Loader2 className="w-8 h-8 animate-spin text-blue-500" /><p className="text-sm font-mono">Building…</p></>
+                <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-3 bg-[#0a0a0a]">
+                  {isSynthesizing ? (
+                    <VibeLoader />
+                  ) : loading ? (
+                    <div className="flex flex-col items-center gap-4">
+                       <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+                       <p className="text-xs font-mono font-bold tracking-widest text-neutral-500 uppercase">Synchronizing Logic...</p>
+                    </div>
                   ) : (
-                    <><div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center"><Monitor className="w-6 h-6 text-gray-400" /></div><p className="text-sm">Describe what to build below</p></>
+                    <div className="flex flex-col items-center gap-6 max-w-sm text-center">
+                       <div className="w-16 h-16 rounded-[2rem] bg-white/5 flex items-center justify-center border border-white/10">
+                         <Monitor className="w-6 h-6 text-neutral-500" />
+                       </div>
+                       <div className="space-y-2">
+                         <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-widest">Awaiting Neural Prompt</h3>
+                         <p className="text-xs text-neutral-600 font-sans leading-relaxed">
+                           Describe your architectural vision below to start the synthesis process.
+                         </p>
+                       </div>
+                    </div>
                   )}
                 </div>
               )}

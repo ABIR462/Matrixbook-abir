@@ -55,11 +55,11 @@ export function Hero({
         </div>
 
         {/* Massive Headline */}
-        <h1 className="huge-type mb-6 md:mb-10 animate-fade-up text-white leading-[0.9] glossy-text tracking-tighter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <h1 className="huge-type mb-5 md:mb-8 animate-fade-up text-white leading-[0.95] glossy-text tracking-tighter drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
           ORCHESTRATE <br /> <span className="text-transparent bg-clip-text bg-gradient-to-tr from-indigo-500 via-purple-400 to-indigo-300">INTELLIGENCE</span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-neutral-400 text-sm md:text-xl leading-relaxed mb-10 md:mb-16 animate-fade-up delay-100 font-sans font-light tracking-tight px-6 opacity-80">
+        <p className="max-w-2xl mx-auto text-neutral-400 text-sm md:text-lg leading-relaxed mb-8 md:mb-14 animate-fade-up delay-100 font-sans font-light tracking-tight px-6 opacity-70">
           Matrixbook is the terminal for multimodal engineering. 
           Synchronize high-fidelity AI workflows with precision.
         </p>
